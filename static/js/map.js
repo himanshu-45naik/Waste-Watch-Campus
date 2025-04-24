@@ -3,39 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (!campusMap) return;
     
-    // Handle click events on SVG map elements
-    const handleMapClicks = function() {
-        // Find all links inside the SVG
-        const buildingLinks = document.querySelectorAll('.building-link');
-        
-        buildingLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault(); // Prevent default behavior
-                const href = this.getAttribute('href');
-                window.location.href = href;
-            });
-            
-            // Add hover effects
-            const building = link.querySelector('rect');
-            if (building) {
-                const originalFill = building.getAttribute('fill');
-                const originalStrokeWidth = building.getAttribute('stroke-width');
-                
-                link.addEventListener('mouseover', function() {
-                    building.setAttribute('fill-opacity', '0.8');
-                    building.setAttribute('stroke-width', '3');
-                });
-                
-                link.addEventListener('mouseout', function() {
-                    building.setAttribute('fill-opacity', '1');
-                    building.setAttribute('stroke-width', originalStrokeWidth);
-                });
-            }
-        });
-        
-        console.log('Map interaction initialized with', buildingLinks.length, 'buildings');
-    };
-    
     // Initialize the map clicks when the SVG is loaded
     const svgObject = document.querySelector('#campus-map object');
     if (svgObject) {
@@ -51,10 +18,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     link.addEventListener('click', function(e) {
                         e.preventDefault();
                         const href = this.getAttribute('href');
+                        // Navigate to the building page
                         window.location.href = href;
                     });
                     
-                    // Add hover effects
+                    // Make all child elements of the link also clickable
+                    const childElements = link.querySelectorAll('*');
+                    childElements.forEach(element => {
+                        element.style.cursor = 'pointer';
+                    });
+                    
+                    // Add hover effects to the building rectangle
                     const building = link.querySelector('rect');
                     if (building) {
                         const originalFill = building.getAttribute('fill');
@@ -68,6 +42,21 @@ document.addEventListener('DOMContentLoaded', function() {
                             building.setAttribute('fill-opacity', '1');
                             building.setAttribute('stroke-width', '2');
                         });
+                    }
+                });
+                
+                // Add event delegation for the entire SVG document
+                svgDoc.addEventListener('click', function(e) {
+                    // Find the closest building link
+                    let target = e.target;
+                    while (target && target !== svgDoc) {
+                        if (target.classList && target.classList.contains('building-link')) {
+                            e.preventDefault();
+                            const href = target.getAttribute('href');
+                            window.location.href = href;
+                            return;
+                        }
+                        target = target.parentNode;
                     }
                 });
                 

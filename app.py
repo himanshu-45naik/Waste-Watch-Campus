@@ -68,13 +68,25 @@ with app.app_context():
                     "floors": 3,  # Ground + 2 floors
                     "classrooms": 15,
                     "labs": 10,
-                    "departments": ["Computer Science", "Artificial Intelligence", "Information Technology"]
+                    "departments": ["Computer Science", "Artificial Intelligence"]
                 },
-                "D.Y. Patil Engineering C Wing": {
+                "D.Y. Patil Engineering B Wing": {
                     "floors": 3,  # Ground + 2 floors
                     "classrooms": 12,
                     "labs": 8,
-                    "departments": ["Mechanical", "Instrumentation"]
+                    "departments": ["Information Technology"]
+                },
+                "D.Y. Patil Engineering C Wing": {
+                    "floors": 3,  # Ground + 2 floors
+                    "classrooms": 15,
+                    "labs": 9,
+                    "departments": ["Mechanical"]
+                },
+                "D.Y. Patil Engineering D Wing": {
+                    "floors": 3,  # Ground + 2 floors
+                    "classrooms": 12,
+                    "labs": 8,
+                    "departments": ["Instrumentation"]
                 },
                 "D.Y. Patil Engineering E Wing": {
                     "floors": 3,  # Ground + 2 floors
@@ -90,9 +102,9 @@ with app.app_context():
                 },
                 "D.Y. Patil International University": {
                     "floors": 6,  # Ground + 5 floors
-                    "classrooms": 60,
-                    "labs": 20,
-                    "departments": ["Computer Science", "Artificial Intelligence", "Mechanical"]
+                    "classrooms": 30,
+                    "labs": 15,
+                    "departments": ["Computer Science", "Artificial Intelligence"]
                 },
                 "D.Y. Patil College of Architecture": {
                     "floors": 3,  # Ground + 2 floors

@@ -32,54 +32,74 @@
   <!-- Building A - Engineering (Right side) -->
   <a href="/building/1" class="building-link">
     <g id="building-1" class="building" cursor="pointer" filter="url(#dropShadow)">
-      <rect x="700" y="180" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
-      <text x="760" y="205" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Engineering A</text>
-      <text x="760" y="230" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">CSE & AI</text>
-      <text x="760" y="255" font-family="Arial" font-size="11" fill="#fff" text-anchor="middle">Wing</text>
+      <rect x="750" y="200" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
+      <text x="810" y="225" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Engineering A</text>
+      <text x="810" y="250" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">CSE & AI</text>
+      <text x="810" y="275" font-family="Arial" font-size="11" fill="#fff" text-anchor="middle">Wing</text>
     </g>
   </a>
   
-  <!-- Building C - Engineering (Center) -->
+  <!-- Building B - Engineering (Upper beside A) -->
   <a href="/building/2" class="building-link">
     <g id="building-2" class="building" cursor="pointer" filter="url(#dropShadow)">
-      <rect x="500" y="150" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
-      <text x="560" y="175" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Engineering C</text>
-      <text x="560" y="200" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">Mechanical</text>
-      <text x="560" y="225" font-family="Arial" font-size="11" fill="#fff" text-anchor="middle">Wing</text>
+      <rect x="650" y="150" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
+      <text x="710" y="175" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Engineering B</text>
+      <text x="710" y="200" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">IT</text>
+      <text x="710" y="225" font-family="Arial" font-size="11" fill="#fff" text-anchor="middle">Wing</text>
     </g>
   </a>
   
-  <!-- Building E - Engineering (Left side) -->
+  <!-- Building C - Engineering (North center) -->
   <a href="/building/3" class="building-link">
     <g id="building-3" class="building" cursor="pointer" filter="url(#dropShadow)">
-      <rect x="300" y="180" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
-      <text x="360" y="205" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Engineering E</text>
-      <text x="360" y="230" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">Civil</text>
-      <text x="360" y="255" font-family="Arial" font-size="11" fill="#fff" text-anchor="middle">Wing</text>
+      <rect x="500" y="120" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
+      <text x="560" y="145" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Engineering C</text>
+      <text x="560" y="170" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">Mechanical</text>
+      <text x="560" y="195" font-family="Arial" font-size="11" fill="#fff" text-anchor="middle">Wing</text>
+    </g>
+  </a>
+  
+  <!-- Building D - Engineering (Beside C) -->
+  <a href="/building/4" class="building-link">
+    <g id="building-4" class="building" cursor="pointer" filter="url(#dropShadow)">
+      <rect x="350" y="150" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
+      <text x="410" y="175" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Engineering D</text>
+      <text x="410" y="200" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">Instrumentation</text>
+      <text x="410" y="225" font-family="Arial" font-size="11" fill="#fff" text-anchor="middle">Wing</text>
     </g>
   </a>
 
-  <!-- Junior College (Beside E) -->
-  <a href="/building/4" class="building-link">
-    <g id="building-4" class="building" cursor="pointer" filter="url(#dropShadow)">
-      <rect x="150" y="320" width="120" height="90" rx="5" ry="5" fill="#4CAF50" stroke="#2E7D32" stroke-width="2" />
-      <text x="210" y="345" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Junior College</text>
-      <text x="210" y="370" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">Science & Arts</text>
-    </g>
-  </a>
-  
-  <!-- International University (Beside Junior College) -->
+  <!-- Building E - Engineering (Left end beside D) -->
   <a href="/building/5" class="building-link">
     <g id="building-5" class="building" cursor="pointer" filter="url(#dropShadow)">
-      <rect x="330" y="350" width="120" height="90" rx="5" ry="5" fill="#FF9800" stroke="#E65100" stroke-width="2" />
-      <text x="390" y="375" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">International</text>
-      <text x="390" y="400" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">University</text>
+      <rect x="200" y="200" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
+      <text x="260" y="225" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Engineering E</text>
+      <text x="260" y="250" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">Civil</text>
+      <text x="260" y="275" font-family="Arial" font-size="11" fill="#fff" text-anchor="middle">Wing</text>
     </g>
   </a>
   
-  <!-- Architecture (Beside International University) -->
+  <!-- Junior College -->
   <a href="/building/6" class="building-link">
     <g id="building-6" class="building" cursor="pointer" filter="url(#dropShadow)">
+      <rect x="150" y="350" width="120" height="90" rx="5" ry="5" fill="#4CAF50" stroke="#2E7D32" stroke-width="2" />
+      <text x="210" y="375" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Junior College</text>
+      <text x="210" y="400" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">Science & Arts</text>
+    </g>
+  </a>
+  
+  <!-- International University -->
+  <a href="/building/7" class="building-link">
+    <g id="building-7" class="building" cursor="pointer" filter="url(#dropShadow)">
+      <rect x="350" y="350" width="120" height="90" rx="5" ry="5" fill="#FF9800" stroke="#E65100" stroke-width="2" />
+      <text x="410" y="375" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">International</text>
+      <text x="410" y="400" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">University</text>
+    </g>
+  </a>
+  
+  <!-- Architecture -->
+  <a href="/building/8" class="building-link">
+    <g id="building-8" class="building" cursor="pointer" filter="url(#dropShadow)">
       <rect x="550" y="350" width="120" height="90" rx="5" ry="5" fill="#9C27B0" stroke="#6A1B9A" stroke-width="2" />
       <text x="610" y="375" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">College of</text>
       <text x="610" y="400" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">Architecture</text>
@@ -87,11 +107,11 @@
   </a>
   
   <!-- Robotics Lab Building -->
-  <a href="/building/7" class="building-link">
-    <g id="building-7" class="building" cursor="pointer" filter="url(#dropShadow)">
-      <rect x="730" y="350" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
-      <text x="790" y="375" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Robotics &</text>
-      <text x="790" y="400" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">Automation Lab</text>
+  <a href="/building/9" class="building-link">
+    <g id="building-9" class="building" cursor="pointer" filter="url(#dropShadow)">
+      <rect x="750" y="350" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
+      <text x="810" y="375" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Robotics &</text>
+      <text x="810" y="400" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">Automation Lab</text>
     </g>
   </a>
   
