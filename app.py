@@ -231,7 +231,10 @@ def logout():
 @login_required
 def profile():
     user_reports = WasteReport.query.filter_by(user_id=current_user.id).all()
-    return render_template('profile.html', reports=user_reports)
+    return render_template('profile.html', reports=user_reports,
+                          get_severity_badge_class=get_severity_badge_class,
+                          get_waste_type_icon=get_waste_type_icon,
+                          get_status_badge_class=get_status_badge_class)
 
 @app.route('/building/<int:building_id>')
 def building(building_id):
@@ -243,7 +246,10 @@ def building(building_id):
 def room(room_id):
     room = Room.query.get_or_404(room_id)
     reports = WasteReport.query.filter_by(room_id=room_id).order_by(WasteReport.created_at.desc()).all()
-    return render_template('room.html', room=room, reports=reports)
+    return render_template('room.html', room=room, reports=reports,
+                          get_severity_badge_class=get_severity_badge_class,
+                          get_waste_type_icon=get_waste_type_icon,
+                          get_status_badge_class=get_status_badge_class)
 
 @app.route('/report/<int:room_id>', methods=['GET', 'POST'])
 @login_required
