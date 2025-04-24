@@ -64,14 +64,23 @@ with app.app_context():
         try:
             # Define the colleges and their departments
             colleges = {
-                "D.Y. Patil College of Engineering": {
+                "D.Y. Patil Engineering A Wing": {
                     "floors": 3,  # Ground + 2 floors
-                    "classrooms": 35,
-                    "labs": 25,
-                    "departments": [
-                        "Computer Science", "Artificial Intelligence", "Information Technology",
-                        "Mechanical", "Civil", "Robotics and Automation", "Instrumentation"
-                    ]
+                    "classrooms": 15,
+                    "labs": 10,
+                    "departments": ["Computer Science", "Artificial Intelligence", "Information Technology"]
+                },
+                "D.Y. Patil Engineering C Wing": {
+                    "floors": 3,  # Ground + 2 floors
+                    "classrooms": 12,
+                    "labs": 8,
+                    "departments": ["Mechanical", "Instrumentation"]
+                },
+                "D.Y. Patil Engineering E Wing": {
+                    "floors": 3,  # Ground + 2 floors
+                    "classrooms": 10,
+                    "labs": 7,
+                    "departments": ["Civil"]
                 },
                 "D.Y. Patil Junior College": {
                     "floors": 3,  # Ground + 2 floors
@@ -81,18 +90,21 @@ with app.app_context():
                 },
                 "D.Y. Patil International University": {
                     "floors": 6,  # Ground + 5 floors
-                    "classrooms": 90,
-                    "labs": 30,
-                    "departments": [
-                        "Computer Science", "Artificial Intelligence", "Information Technology",
-                        "Mechanical", "Civil", "Robotics and Automation", "Instrumentation"
-                    ]
+                    "classrooms": 60,
+                    "labs": 20,
+                    "departments": ["Computer Science", "Artificial Intelligence", "Mechanical"]
                 },
                 "D.Y. Patil College of Architecture": {
                     "floors": 3,  # Ground + 2 floors
-                    "classrooms": 25,
-                    "labs": 9,
+                    "classrooms": 15,
+                    "labs": 5,
                     "departments": ["Architecture"]
+                },
+                "D.Y. Patil Robotics & Automation Lab": {
+                    "floors": 2,  # Ground + 1 floor
+                    "classrooms": 5,
+                    "labs": 10,
+                    "departments": ["Robotics and Automation"]
                 }
             }
             
@@ -157,6 +169,31 @@ with app.app_context():
                         db.session.add(room)
             
             db.session.commit()
+            
+            # Create a test user
+            if User.query.filter_by(username='testuser').first() is None:
+                test_user = User(
+                    username='testuser',
+                    email='test@example.com',
+                    user_type='student'
+                )
+                test_user.set_password('password123')
+                db.session.add(test_user)
+                db.session.commit()
+                logger.info("Test user created successfully")
+                
+            # Create a test user for cleaning staff
+            if User.query.filter_by(username='cleaning').first() is None:
+                staff_user = User(
+                    username='cleaning',
+                    email='cleaning@example.com',
+                    user_type='cleaning_staff'
+                )
+                staff_user.set_password('password123')
+                db.session.add(staff_user)
+                db.session.commit()
+                logger.info("Cleaning staff user created successfully")
+                
             logger.info("Campus data initialized successfully")
         except Exception as e:
             db.session.rollback()

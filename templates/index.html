@@ -58,9 +58,14 @@
                 <!-- Interactive Map -->
                 <div id="campus-map" class="mb-4">
                     <!-- SVG map will be loaded here -->
-                    <object type="image/svg+xml" data="{{ url_for('static', filename='svg/campus_map.svg') }}" width="100%" height="600">
-                        Your browser does not support SVG
-                    </object>
+                    <div class="map-container"> 
+                        <object type="image/svg+xml" data="{{ url_for('static', filename='svg/campus_map.svg') }}" width="100%" height="600">
+                            Your browser does not support SVG
+                        </object>
+                    </div>
+                    <div class="map-credentials mb-2 text-center">
+                        <p class="mb-0 small text-muted">Dummy login credentials: <strong>Username:</strong> testuser | <strong>Password:</strong> password123</p>
+                    </div>
                 </div>
                 
                 <!-- How to use instructions -->

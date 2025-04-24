@@ -1,58 +1,114 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600">
-  <!-- Campus Background -->
-  <rect x="0" y="0" width="1000" height="600" fill="#f0f0f0" />
+  <!-- Campus Background with gradient -->
+  <defs>
+    <linearGradient id="campusGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1a2638" />
+      <stop offset="100%" stop-color="#2d3a4f" />
+    </linearGradient>
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
+      <feOffset dx="2" dy="2" result="offsetblur" />
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5" />
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
   
-  <!-- Roads -->
-  <rect x="100" y="250" width="800" height="20" fill="#333" />
-  <rect x="500" y="100" width="20" height="400" fill="#333" />
+  <rect x="0" y="0" width="1000" height="600" fill="url(#campusGradient)" />
   
-  <!-- Buildings -->
-  <!-- College of Engineering -->
-  <g id="building-1" class="building" cursor="pointer">
-    <rect x="150" y="100" width="200" height="120" fill="#90CAF9" stroke="#000" stroke-width="2" />
-    <text x="250" y="170" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle">D.Y. Patil College of Engineering</text>
-  </g>
+  <!-- Decorative elements -->
+  <circle cx="500" cy="300" r="220" fill="none" stroke="#3a4a63" stroke-width="15" stroke-opacity="0.3" />
+  <circle cx="500" cy="300" r="280" fill="none" stroke="#3a4a63" stroke-width="8" stroke-opacity="0.2" />
   
-  <!-- Junior College -->
-  <g id="building-2" class="building" cursor="pointer">
-    <rect x="650" y="100" width="200" height="120" fill="#A5D6A7" stroke="#000" stroke-width="2" />
-    <text x="750" y="170" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle">D.Y. Patil Junior College</text>
-  </g>
+  <!-- Main Roads -->
+  <path d="M 200,300 C 300,150 700,150 800,300" stroke="#555" stroke-width="20" fill="none" />
+  <path d="M 200,300 L 250,450 L 750,450 L 800,300" stroke="#555" stroke-width="20" fill="none" />
+  <path d="M 500,300 L 500,450" stroke="#555" stroke-width="20" fill="none" />
   
-  <!-- International University -->
-  <g id="building-3" class="building" cursor="pointer">
-    <rect x="150" y="320" width="200" height="120" fill="#FFCC80" stroke="#000" stroke-width="2" />
-    <text x="250" y="390" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle">D.Y. Patil International University</text>
-  </g>
+  <!-- Building A - Engineering (Right side) -->
+  <a href="/building/1" class="building-link">
+    <g id="building-1" class="building" cursor="pointer" filter="url(#dropShadow)">
+      <rect x="700" y="180" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
+      <text x="760" y="205" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Engineering A</text>
+      <text x="760" y="230" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">CSE & AI</text>
+      <text x="760" y="255" font-family="Arial" font-size="11" fill="#fff" text-anchor="middle">Wing</text>
+    </g>
+  </a>
   
-  <!-- College of Architecture -->
-  <g id="building-4" class="building" cursor="pointer">
-    <rect x="650" y="320" width="200" height="120" fill="#CE93D8" stroke="#000" stroke-width="2" />
-    <text x="750" y="390" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle">D.Y. Patil College of Architecture</text>
-  </g>
+  <!-- Building C - Engineering (Center) -->
+  <a href="/building/2" class="building-link">
+    <g id="building-2" class="building" cursor="pointer" filter="url(#dropShadow)">
+      <rect x="500" y="150" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
+      <text x="560" y="175" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Engineering C</text>
+      <text x="560" y="200" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">Mechanical</text>
+      <text x="560" y="225" font-family="Arial" font-size="11" fill="#fff" text-anchor="middle">Wing</text>
+    </g>
+  </a>
+  
+  <!-- Building E - Engineering (Left side) -->
+  <a href="/building/3" class="building-link">
+    <g id="building-3" class="building" cursor="pointer" filter="url(#dropShadow)">
+      <rect x="300" y="180" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
+      <text x="360" y="205" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Engineering E</text>
+      <text x="360" y="230" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">Civil</text>
+      <text x="360" y="255" font-family="Arial" font-size="11" fill="#fff" text-anchor="middle">Wing</text>
+    </g>
+  </a>
+
+  <!-- Junior College (Beside E) -->
+  <a href="/building/4" class="building-link">
+    <g id="building-4" class="building" cursor="pointer" filter="url(#dropShadow)">
+      <rect x="150" y="320" width="120" height="90" rx="5" ry="5" fill="#4CAF50" stroke="#2E7D32" stroke-width="2" />
+      <text x="210" y="345" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Junior College</text>
+      <text x="210" y="370" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">Science & Arts</text>
+    </g>
+  </a>
+  
+  <!-- International University (Beside Junior College) -->
+  <a href="/building/5" class="building-link">
+    <g id="building-5" class="building" cursor="pointer" filter="url(#dropShadow)">
+      <rect x="330" y="350" width="120" height="90" rx="5" ry="5" fill="#FF9800" stroke="#E65100" stroke-width="2" />
+      <text x="390" y="375" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">International</text>
+      <text x="390" y="400" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">University</text>
+    </g>
+  </a>
+  
+  <!-- Architecture (Beside International University) -->
+  <a href="/building/6" class="building-link">
+    <g id="building-6" class="building" cursor="pointer" filter="url(#dropShadow)">
+      <rect x="550" y="350" width="120" height="90" rx="5" ry="5" fill="#9C27B0" stroke="#6A1B9A" stroke-width="2" />
+      <text x="610" y="375" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">College of</text>
+      <text x="610" y="400" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">Architecture</text>
+    </g>
+  </a>
+  
+  <!-- Robotics Lab Building -->
+  <a href="/building/7" class="building-link">
+    <g id="building-7" class="building" cursor="pointer" filter="url(#dropShadow)">
+      <rect x="730" y="350" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
+      <text x="790" y="375" font-family="Arial" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Robotics &</text>
+      <text x="790" y="400" font-family="Arial" font-size="11" fill="#eee" text-anchor="middle">Automation Lab</text>
+    </g>
+  </a>
   
   <!-- Campus Title -->
-  <text x="500" y="50" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle">D.Y. Patil Campus Map</text>
+  <text x="500" y="50" font-family="Arial" font-size="28" font-weight="bold" fill="#fff" text-anchor="middle" filter="url(#dropShadow)">D.Y. Patil Campus Map</text>
   
   <!-- Compass -->
-  <circle cx="70" cy="70" r="20" fill="white" stroke="#000" stroke-width="1" />
-  <text x="70" y="75" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle">N</text>
-  <line x1="70" y1="70" x2="70" y2="50" stroke="#000" stroke-width="2" />
-  <polygon points="70,50 65,55 75,55" fill="#000" />
+  <g filter="url(#dropShadow)">
+    <circle cx="70" cy="70" r="25" fill="#34495e" stroke="#fff" stroke-width="2" />
+    <text x="70" y="75" font-family="Arial" font-size="16" font-weight="bold" fill="#fff" text-anchor="middle">N</text>
+    <line x1="70" y1="70" x2="70" y2="40" stroke="#fff" stroke-width="2" />
+    <polygon points="70,35 65,45 75,45" fill="#fff" />
+  </g>
   
-  <!-- Legend -->
-  <rect x="800" y="20" width="180" height="130" fill="white" stroke="#000" stroke-width="1" />
-  <text x="820" y="40" font-family="Arial" font-size="14" font-weight="bold">Legend:</text>
-  
-  <rect x="810" y="55" width="20" height="15" fill="#90CAF9" stroke="#000" stroke-width="1" />
-  <text x="835" y="67" font-family="Arial" font-size="12">College of Engineering</text>
-  
-  <rect x="810" y="80" width="20" height="15" fill="#A5D6A7" stroke="#000" stroke-width="1" />
-  <text x="835" y="92" font-family="Arial" font-size="12">Junior College</text>
-  
-  <rect x="810" y="105" width="20" height="15" fill="#FFCC80" stroke="#000" stroke-width="1" />
-  <text x="835" y="117" font-family="Arial" font-size="12">International University</text>
-  
-  <rect x="810" y="130" width="20" height="15" fill="#CE93D8" stroke="#000" stroke-width="1" />
-  <text x="835" y="142" font-family="Arial" font-size="12">College of Architecture</text>
+  <!-- Instructions -->
+  <g filter="url(#dropShadow)">
+    <rect x="350" y="520" width="300" height="50" rx="5" ry="5" fill="#34495e" fill-opacity="0.8" />
+    <text x="500" y="550" font-family="Arial" font-size="14" fill="#fff" text-anchor="middle">Click on any building to explore</text>
+  </g>
 </svg>
