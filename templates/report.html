@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}Report Waste - {{ room.name }} - D.Y. Patil Campus Waste Management{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Campus Map</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('building', building_id=room.floor.building_id) }}">{{ room.floor.building.name }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('room', room_id=room.id) }}">{{ room.name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Report Waste</li>
+            </ol>
+        </nav>
+        
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h4 class="mb-0 text-dark"><i class="fas fa-exclamation-triangle me-2"></i>Report Waste</h4>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas {% if room.room_type == 'classroom' %}fa-chalkboard{% else %}fa-flask{% endif %} fa-2x me-3"></i>
+                        <div>
+                            <h5 class="mb-0">{{ room.name }} ({{ room.room_number }})</h5>
+                            <small class="text-muted">{{ room.floor.building.name }} - {{ room.floor.name }}</small>
+                        </div>
+                    </div>
+                    <p>
+                        Use this form to report waste issues in this {{ room.room_type }}. 
+                        Please provide as much detail as possible and upload at least one photo of the waste.
+                        Our AI system will analyze the images to help classify the waste type and severity.
+                    </p>
+                </div>
+                
+                <form method="POST" enctype="multipart/form-data" id="report-form">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">{{ form.title.label }} <span class="text-danger">*</span></label>
+                                {{ form.title(class="form-control", id="title", placeholder="Provide a clear title for this report") }}
+                                {% for error in form.title.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="description" class="form-label">{{ form.description.label }}</label>
+                                {{ form.description(class="form-control", rows=5, id="description", placeholder="Describe the waste issue in detail") }}
+                                {% for error in form.description.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="severity" class="form-label">{{ form.severity.label }} <span class="text-danger">*</span></label>
+                                {{ form.severity(class="form-select", id="severity") }}
+                                {% for error in form.severity.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                                <div class="form-text">
+                                    You can let our AI assess the severity based on images, or select a level manually.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="fas fa-images me-2"></i>Upload Photos</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text mb-3">
+                                        Upload up to 5 photos of the waste issue. At least one photo is required.
+                                        Our AI will analyze the first image to help classify the waste.
+                                    </p>
+                                    
+                                    <div class="mb-3">
+                                        <label for="image1" class="form-label">Photo 1 <span class="text-danger">*</span></label>
+                                        {{ form.image1(class="form-control", id="image1") }}
+                                        {% for error in form.image1.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                        {% endfor %}
+                                        <div id="image1_preview" class="image-preview"></div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="image2" class="form-label">Photo 2 (Optional)</label>
+                                        {{ form.image2(class="form-control", id="image2") }}
+                                        <div id="image2_preview" class="image-preview"></div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="image3" class="form-label">Photo 3 (Optional)</label>
+                                        {{ form.image3(class="form-control", id="image3") }}
+                                        <div id="image3_preview" class="image-preview"></div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="image4" class="form-label">Photo 4 (Optional)</label>
+                                        {{ form.image4(class="form-control", id="image4") }}
+                                        <div id="image4_preview" class="image-preview"></div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="image5" class="form-label">Photo 5 (Optional)</label>
+                                        {{ form.image5(class="form-control", id="image5") }}
+                                        <div id="image5_preview" class="image-preview"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{{ url_for('room', room_id=room.id) }}" class="btn btn-secondary">Cancel</a>
+                        {{ form.submit(class="btn btn-warning") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/report.js') }}"></script>
+{% endblock %}

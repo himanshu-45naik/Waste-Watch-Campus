@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ room.name }} - D.Y. Patil Campus Waste Management{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Campus Map</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('building', building_id=room.floor.building_id) }}">{{ room.floor.building.name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ room.name }}</li>
+            </ol>
+        </nav>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h1 class="card-title">
+                            {% if room.room_type == 'classroom' %}
+                            <i class="fas fa-chalkboard me-2"></i>
+                            {% else %}
+                            <i class="fas fa-flask me-2"></i>
+                            {% endif %}
+                            {{ room.name }}
+                        </h1>
+                        <h6 class="card-subtitle mb-3 text-muted">{{ room.room_number }}</h6>
+                        
+                        <div class="mb-3">
+                            <span class="badge bg-primary me-2">{{ room.floor.name }}</span>
+                            <span class="badge bg-info me-2">{{ room.department.name }}</span>
+                            <span class="badge bg-secondary me-2">{{ room.room_type|capitalize }}</span>
+                        </div>
+                        
+                        <p class="lead">
+                            View and report waste issues in this {{ room.room_type }}.
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('report', room_id=room.id) }}" class="btn btn-warning">
+                            <i class="fas fa-exclamation-triangle me-1"></i>Report Waste
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('login') }}?next={{ url_for('report', room_id=room.id) }}" class="btn btn-warning">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login to Report Waste
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-history me-2"></i>Recent Waste Reports</h4>
+            </div>
+            <div class="card-body">
+                {% if reports %}
+                    {% for report in reports %}
+                    <div class="card mb-4 report-card {{ report.severity.lower() }}">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">{{ report.title }}</h5>
+                                <div>
+                                    <span class="badge {{ get_severity_badge_class(report.severity) }} me-2">
+                                        {{ report.severity }}
+                                    </span>
+                                    <span class="badge {{ get_status_badge_class(report.status) }}">
+                                        {{ report.status|capitalize }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    {% set images = report.get_images() %}
+                                    {% if images %}
+                                    <div class="report-gallery">
+                                        <img src="{{ url_for('static', filename='uploads/' + images[0]) }}" alt="Waste image" class="main-image mb-2">
+                                        {% if images|length > 1 %}
+                                        <div class="report-thumbnails">
+                                            {% for image in images %}
+                                            <img src="{{ url_for('static', filename='uploads/' + image) }}" 
+                                                alt="Waste thumbnail" 
+                                                class="{% if loop.first %}active{% endif %}">
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    {% else %}
+                                    <div class="text-center p-4 bg-dark bg-opacity-25 rounded">
+                                        <i class="fas fa-image fa-3x mb-3 text-muted"></i>
+                                        <p class="mb-0">No images available</p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <h6 class="mb-2">Waste Type:</h6>
+                                        <p>
+                                            <i class="fas {{ get_waste_type_icon(report.waste_type) }} me-2"></i>
+                                            {{ report.waste_type }}
+                                        </p>
+                                    </div>
+                                    {% if report.description %}
+                                    <div class="mb-3">
+                                        <h6 class="mb-2">Description:</h6>
+                                        <p>{{ report.description }}</p>
+                                    </div>
+                                    {% endif %}
+                                    <div class="mb-3">
+                                        <h6 class="mb-2">Reported By:</h6>
+                                        <p>
+                                            <i class="fas fa-user me-2"></i>
+                                            {{ report.reporter.username }}
+                                            <span class="badge bg-secondary ms-2">{{ report.reporter.user_type|capitalize }}</span>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-2">Reported On:</h6>
+                                        <p>
+                                            <i class="fas fa-calendar-alt me-2"></i>
+                                            {{ report.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="alert alert-info" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>No waste reports have been submitted for this room yet.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/report.js') }}"></script>
+{% endblock %}

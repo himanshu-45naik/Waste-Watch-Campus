@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ building.name }} - D.Y. Patil Campus Waste Management{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Campus Map</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ building.name }}</li>
+            </ol>
+        </nav>
+        
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">
+                    <i class="fas fa-building me-2"></i>{{ building.name }}
+                </h1>
+                
+                <div class="mb-4">
+                    <p class="lead">
+                        Explore floors and rooms to view or report waste issues in this building.
+                    </p>
+                </div>
+                
+                <!-- Floor Tabs -->
+                <ul class="nav nav-tabs mb-4" id="floorTabs" role="tablist">
+                    {% for floor in floors %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {% if loop.first %}active{% endif %}" 
+                                id="floor-{{ floor.id }}-tab" 
+                                data-bs-toggle="tab" 
+                                data-bs-target="#floor-{{ floor.id }}" 
+                                type="button" 
+                                role="tab" 
+                                aria-controls="floor-{{ floor.id }}" 
+                                aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
+                            {{ floor.name }}
+                        </button>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <!-- Tab Content -->
+                <div class="tab-content" id="floorTabsContent">
+                    {% for floor in floors %}
+                    <div class="tab-pane fade {% if loop.first %}show active{% endif %}" 
+                         id="floor-{{ floor.id }}" 
+                         role="tabpanel" 
+                         aria-labelledby="floor-{{ floor.id }}-tab">
+                        
+                        <div class="floor-section">
+                            <h3 class="mb-3">{{ floor.name }}</h3>
+                            
+                            <!-- Room Type Tabs -->
+                            <ul class="nav nav-pills mb-3" id="roomTypeTabs{{ floor.id }}" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" 
+                                            id="classrooms-{{ floor.id }}-tab" 
+                                            data-bs-toggle="pill" 
+                                            data-bs-target="#classrooms-{{ floor.id }}" 
+                                            type="button" 
+                                            role="tab" 
+                                            aria-controls="classrooms-{{ floor.id }}" 
+                                            aria-selected="true">
+                                        <i class="fas fa-chalkboard me-1"></i>Classrooms
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" 
+                                            id="labs-{{ floor.id }}-tab" 
+                                            data-bs-toggle="pill" 
+                                            data-bs-target="#labs-{{ floor.id }}" 
+                                            type="button" 
+                                            role="tab" 
+                                            aria-controls="labs-{{ floor.id }}" 
+                                            aria-selected="false">
+                                        <i class="fas fa-flask me-1"></i>Labs
+                                    </button>
+                                </li>
+                            </ul>
+                            
+                            <!-- Room Type Content -->
+                            <div class="tab-content" id="roomTypeTabsContent{{ floor.id }}">
+                                <!-- Classrooms -->
+                                <div class="tab-pane fade show active" 
+                                     id="classrooms-{{ floor.id }}" 
+                                     role="tabpanel" 
+                                     aria-labelledby="classrooms-{{ floor.id }}-tab">
+                                    
+                                    <div class="room-grid">
+                                        {% set classrooms = floor.rooms.filter_by(room_type='classroom').all() %}
+                                        {% if classrooms %}
+                                            {% for room in classrooms %}
+                                            <div class="card room-card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">{{ room.name }}</h5>
+                                                    <p class="card-text">
+                                                        <span class="badge bg-primary">{{ room.room_number }}</span>
+                                                        <span class="badge bg-info">{{ room.department.name }}</span>
+                                                    </p>
+                                                    <div class="d-grid gap-2">
+                                                        <a href="{{ url_for('room', room_id=room.id) }}" class="btn btn-outline-primary">
+                                                            <i class="fas fa-info-circle me-1"></i>Room Details
+                                                        </a>
+                                                        {% if current_user.is_authenticated %}
+                                                        <a href="{{ url_for('report', room_id=room.id) }}" class="btn btn-outline-warning">
+                                                            <i class="fas fa-exclamation-triangle me-1"></i>Report Waste
+                                                        </a>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <div class="alert alert-info w-100" role="alert">
+                                                <i class="fas fa-info-circle me-2"></i>No classrooms found on this floor.
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Labs -->
+                                <div class="tab-pane fade" 
+                                     id="labs-{{ floor.id }}" 
+                                     role="tabpanel" 
+                                     aria-labelledby="labs-{{ floor.id }}-tab">
+                                    
+                                    <div class="room-grid">
+                                        {% set labs = floor.rooms.filter_by(room_type='lab').all() %}
+                                        {% if labs %}
+                                            {% for room in labs %}
+                                            <div class="card room-card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">{{ room.name }}</h5>
+                                                    <p class="card-text">
+                                                        <span class="badge bg-primary">{{ room.room_number }}</span>
+                                                        <span class="badge bg-info">{{ room.department.name }}</span>
+                                                    </p>
+                                                    <div class="d-grid gap-2">
+                                                        <a href="{{ url_for('room', room_id=room.id) }}" class="btn btn-outline-primary">
+                                                            <i class="fas fa-info-circle me-1"></i>Room Details
+                                                        </a>
+                                                        {% if current_user.is_authenticated %}
+                                                        <a href="{{ url_for('report', room_id=room.id) }}" class="btn btn-outline-warning">
+                                                            <i class="fas fa-exclamation-triangle me-1"></i>Report Waste
+                                                        </a>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <div class="alert alert-info w-100" role="alert">
+                                                <i class="fas fa-info-circle me-2"></i>No labs found on this floor.
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

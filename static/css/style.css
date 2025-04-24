@@ -1,0 +1,166 @@
+/* Custom styles for the waste management platform */
+
+/* General Styles */
+body {
+    padding-top: 56px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.footer {
+    margin-top: auto;
+    padding: 1rem 0;
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
+}
+
+/* Campus Map */
+#campus-map {
+    width: 100%;
+    height: 600px;
+    border: 1px solid var(--bs-gray-400);
+    border-radius: 0.25rem;
+    overflow: hidden;
+    background-color: var(--bs-light);
+}
+
+/* Building and Room Cards */
+.building-card, .room-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.building-card:hover, .room-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.floor-section {
+    margin-bottom: 2rem;
+}
+
+.room-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+/* Waste Reports */
+.report-card {
+    margin-bottom: 1.5rem;
+    border-left: 5px solid var(--bs-primary);
+}
+
+.critical {
+    border-left-color: var(--bs-danger);
+}
+
+.high {
+    border-left-color: var(--bs-warning);
+}
+
+.medium {
+    border-left-color: var(--bs-info);
+}
+
+.low {
+    border-left-color: var(--bs-success);
+}
+
+.report-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.report-thumbnails {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+
+.report-thumbnails img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 0.25rem;
+}
+
+.report-thumbnails img.active {
+    border-color: var(--bs-primary);
+}
+
+.main-image {
+    max-height: 300px;
+    width: 100%;
+    object-fit: contain;
+    border-radius: 0.25rem;
+}
+
+/* Image Upload Previews */
+.image-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Leaderboard */
+.leaderboard-table th, .leaderboard-table td {
+    vertical-align: middle;
+}
+
+.department-rank {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.rank-number {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--bs-primary);
+    color: var(--bs-white);
+    font-weight: bold;
+}
+
+.rank-1 .rank-number {
+    background-color: gold;
+    color: var(--bs-dark);
+}
+
+.rank-2 .rank-number {
+    background-color: silver;
+    color: var(--bs-dark);
+}
+
+.rank-3 .rank-number {
+    background-color: #cd7f32; /* Bronze */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #campus-map {
+        height: 400px;
+    }
+    
+    .room-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 576px) {
+    .room-grid {
+        grid-template-columns: 1fr;
+    }
+}
