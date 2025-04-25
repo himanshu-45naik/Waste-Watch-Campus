@@ -2,15 +2,20 @@ import os
 import logging
 from flask import Flask, render_template, redirect, url_for, flash, request, jsonify
 from storage import db
+from utils import generate_image_filename
 from sqlalchemy.orm import DeclarativeBase
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
 import json
+from PIL import Image
 import google.generativeai as genai
 from datetime import datetime
 import base64
+import io
+from dotenv import load_dotenv
 
+load_dotenv()
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -39,7 +44,7 @@ app.config["UPLOAD_FOLDER"] = "static/uploads"
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16MB limit for uploads
 
 # Configure API key
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "your-gemini-api-key")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
 
 # Initialize the database
@@ -291,7 +296,14 @@ def building(building_id):
 @app.route('/room/<int:room_id>')
 def room(room_id):
     room = Room.query.get_or_404(room_id)
+    logger.debug(f"Fetching reports for room {room_id}")
     reports = WasteReport.query.filter_by(room_id=room_id).order_by(WasteReport.created_at.desc()).all()
+    logger.debug(f"Found {len(reports)} reports for room {room_id}")
+    
+    # Log each report for debugging
+    for report in reports:
+        logger.debug(f"Report ID: {report.id}, Title: {report.title}, Room ID: {report.room_id}")
+    
     return render_template('room.html', room=room, reports=reports,
                           get_severity_badge_class=get_severity_badge_class,
                           get_waste_type_icon=get_waste_type_icon,
@@ -303,55 +315,91 @@ def report(room_id):
     room = Room.query.get_or_404(room_id)
     form = ReportForm()
     
+    logger.debug(f"Processing report form for room {room_id}, is_submitted: {form.is_submitted()}")
+    
     if form.validate_on_submit():
         try:
+            logger.debug("Form validated successfully")
+            # Create the report (without images initially)
             report = WasteReport(
                 title=form.title.data,
                 description=form.description.data,
                 severity=form.severity.data,
                 room_id=room.id,
                 user_id=current_user.id,
-                waste_type='Unknown',  # Will be updated by Gemini
+                waste_type='Unknown',
                 status='Pending'
             )
+            logger.debug(f"Created report object with room_id: {report.room_id}")
             db.session.add(report)
-            db.session.flush()  # Get the report ID
-            
-            # Process images
+            db.session.flush()  # Get the ID *after* adding to the session
+            report_id = report.id
+
             uploaded_images = []
-            for i in range(1, 6):  # Handle up to 5 images
+            # Process images (using the now-assigned report_id)
+            for i in range(1, 6):
                 image_field = getattr(form, f'image{i}')
                 if image_field.data:
-                    filename = secure_filename(f"report_{report.id}_img{i}_{datetime.now().strftime('%Y%m%d%H%M%S')}.jpg")
+                    filename = secure_filename(generate_image_filename(report_id, i))
                     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                    image_field.data.save(filepath)
-                    uploaded_images.append(filename)
-                    
-                    # For the first image, analyze with Gemini for waste classification
-                    if i == 1:
-                        try:
-                            # Get the waste type prediction from Gemini
-                            with open(filepath, "rb") as img_file:
-                                image_bytes = img_file.read()
-                                waste_type, severity = analyze_waste_image(image_bytes)
-                                report.waste_type = waste_type
-                                # Only override severity if user selected "Unknown"
-                                if form.severity.data == "Unknown":
-                                    report.severity = severity
-                        except Exception as e:
-                            logger.error(f"Error analyzing image with Gemini: {str(e)}")
-            
+                    try:
+                        image_field.data.save(filepath)
+                        uploaded_images.append(filename)
+                        # Gemini analysis (only for the first image)
+                        if i == 1:
+                            try:
+                                with open(filepath, "rb") as img_file:
+                                    image_bytes = img_file.read()
+                                    waste_type, severity = analyze_waste_image(image_bytes)
+                                    report.waste_type = waste_type
+                                    if form.severity.data == "Unknown":
+                                        report.severity = severity
+                            except Exception as gemini_e:
+                                logger.error(f"Gemini API error: {gemini_e}")
+                                flash(f"Gemini analysis failed: {gemini_e}", 'warning') #Inform user about failure
+                    except Exception as image_e:
+                        logger.error(f"Image save error: {image_e}")
+                        flash(f"Error saving image {i}: {image_e}", 'danger')
+                        db.session.rollback() # Rollback changes if image saving fails
+                        return redirect(url_for('report', room_id=room_id)) # Redirect back to the form
+
             report.images = json.dumps(uploaded_images)
             db.session.commit()
-            
+            logger.debug(f"Report committed to DB with ID: {report.id}")
             flash('Waste report submitted successfully!', 'success')
-            return redirect(url_for('room', room_id=room.id))
-        
+            return redirect(url_for('room', room_id=room_id))
+
         except Exception as e:
             db.session.rollback()
-            flash(f'Error submitting report: {str(e)}', 'danger')
-    
+            flash(f'An error occurred: {str(e)}', 'danger')
+            logger.exception(f"Error submitting report: {e}")
+            return redirect(url_for('report', room_id=room_id))
+    else:
+        if form.is_submitted():
+            logger.debug(f"Form validation failed: {form.errors}")
+
     return render_template('report.html', form=form, room=room)
+
+@app.route('/update_status/<int:report_id>', methods=['POST'])
+@login_required
+def update_status(report_id):
+    if current_user.user_type != 'cleaning_staff':
+        return jsonify({'success': False, 'message': 'Unauthorized'})
+
+    try:
+        report = WasteReport.query.get(report_id) # Corrected line
+        if report is None:
+            return jsonify({'success': False, 'message': 'Report not found'})
+        if report.status == 'pending':
+            report.status = 'completed'
+            db.session.commit()
+            return jsonify({'success': True})
+        else:
+            return jsonify({'success': False, 'message': 'Report already updated'})
+    except Exception as e:
+        db.session.rollback()
+        logger.exception(f"Error updating report status: {e}") # Use logger.exception for better debugging info
+        return jsonify({'success': False, 'message': 'An unexpected error occurred'})
 
 @app.route('/leaderboard')
 def leaderboard():
@@ -395,7 +443,7 @@ def leaderboard():
             college_groups["D.Y. Patil College of Architecture"].append(building)
         
     
-    # Now create college data structure with departments grouped by college type
+    
     college_data = {}
     
     for college_name, buildings in college_groups.items():
@@ -440,84 +488,126 @@ def leaderboard():
                           college_data=college_data)
 
 def analyze_waste_image(image_bytes):
-    """
-    Analyze an image using Google's Gemini API to classify waste type and severity
-    """
+    """Analyzes a waste image using Gemini Pro Vision."""
     try:
-        # Convert image to base64
-        image_b64 = base64.b64encode(image_bytes).decode('utf-8')
+        # Check if API key is properly configured
+        if GEMINI_API_KEY == "your-gemini-api-key":
+            logger.error("Using default placeholder API key - set the GEMINI_API_KEY environment variable")
+            return "Unknown", "Unknown"
+            
+        logger.debug("Using configured Gemini API key")
         
-        # Initialize Gemini model
-        model = genai.GenerativeModel('gemini-pro-vision')
+        # Convert bytes to PIL Image
+        image = Image.open(io.BytesIO(image_bytes))
         
-        # Prepare the prompt
-        prompt = """
-        Analyze this image of waste in a classroom or lab setting. Please identify:
-        1. What type of waste is visible (e.g., Paper, Plastic, E-waste, Food waste, Mixed waste, Hazardous)
-        2. How severe is the waste situation (Critical, High, Medium, Low)
+        # Convert RGBA to RGB if needed (remove transparency)
+        if image.mode == 'RGBA':
+            logger.debug("Converting RGBA image to RGB")
+            # Create white background
+            background = Image.new('RGB', image.size, (255, 255, 255))
+            # Paste the image on the background
+            background.paste(image, mask=image.split()[3])  # Use alpha channel as mask
+            image = background
         
-        Format your response as a JSON object with two fields: waste_type and severity.
-        Example: {"waste_type": "Paper", "severity": "Medium"}
-        """
+        # Convert to base64 for Gemini API
+        buffered = io.BytesIO()
+        image.save(buffered, format="JPEG")
+        image_b64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
         
-        # Prepare the image for the model
-        image_parts = [
-            {
-                "mime_type": "image/jpeg",
-                "data": image_b64
-            }
-        ]
+        # Prepare Gemini request
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        
+        prompt = """Analyze this image of waste. Identify:
+        1. Waste type (e.g., Paper, Plastic, E-waste, Food waste, Mixed waste, Hazardous)
+        2. Severity (Critical, High, Medium, Low)
+        Return as JSON: {"waste_type": "...", "severity": "..."}"""
+        
         
         # Generate content
-        response = model.generate_content([prompt, image_parts])
+        logger.debug("Sending request to Gemini API")
+        response = model.generate_content(
+                contents=[{"mime_type": "image/jpeg", "data": image_b64}, prompt],
+                generation_config={"temperature": 0.1}
+            )
         
-        # Extract the response
-        response_text = response.text
+        
+        
+        # Log the response for debugging
+        logger.debug(f"Gemini response: {response.text[:100]}...")
         
         # Try to parse the JSON response
         try:
             # Find JSON content in the response (might be surrounded by backticks or other text)
             import re
-            json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
+            json_match = re.search(r'\{.*\}', response.text, re.DOTALL)
             if json_match:
                 json_str = json_match.group(0)
+                logger.debug(f"Extracted JSON: {json_str}")
                 result = json.loads(json_str)
                 waste_type = result.get('waste_type', 'Unknown')
                 severity = result.get('severity', 'Unknown')
+                logger.debug(f"Successfully parsed response: waste_type={waste_type}, severity={severity}")
                 return waste_type, severity
+            else:
+                logger.error("No JSON object found in response")
         except Exception as e:
-            logger.error(f"Error parsing Gemini response: {str(e)}")
+            logger.error(f"Error parsing Gemini response JSON: {str(e)}")
         
         # Fallback: simple text parsing if JSON parsing fails
-        if "paper" in response_text.lower():
+        response_text = response.text.lower()
+        logger.debug("Falling back to text parsing")
+        
+        if "paper" in response_text:
             waste_type = "Paper"
-        elif "plastic" in response_text.lower():
+        elif "plastic" in response_text:
             waste_type = "Plastic"
-        elif "e-waste" in response_text.lower() or "electronic" in response_text.lower():
+        elif "e-waste" in response_text or "electronic" in response_text:
             waste_type = "E-waste"
-        elif "food" in response_text.lower():
+        elif "food" in response_text:
             waste_type = "Food waste"
-        elif "hazard" in response_text.lower():
+        elif "hazard" in response_text:
             waste_type = "Hazardous"
         else:
             waste_type = "Mixed waste"
         
-        if "critical" in response_text.lower():
+        if "critical" in response_text:
             severity = "Critical"
-        elif "high" in response_text.lower():
+        elif "high" in response_text:
             severity = "High"
-        elif "medium" in response_text.lower():
+        elif "medium" in response_text:
             severity = "Medium"
-        elif "low" in response_text.lower():
+        elif "low" in response_text:
             severity = "Low"
         else:
             severity = "Unknown"
         
+        logger.debug(f"Text parsing result: waste_type={waste_type}, severity={severity}")
         return waste_type, severity
-    
+        
     except Exception as e:
-        logger.error(f"Error in Gemini analysis: {str(e)}")
+        logger.exception(f"Error in Gemini analysis: {e}")
         return "Unknown", "Unknown"
+
+@app.route('/debug_reports')
+@login_required
+def debug_reports():
+    all_reports = WasteReport.query.all()
+    logger.debug(f"Found {len(all_reports)} total reports in database")
+    
+    result = []
+    for report in all_reports:
+        result.append({
+            'id': report.id,
+            'title': report.title,
+            'room_id': report.room_id,
+            'user_id': report.user_id,
+            'created_at': str(report.created_at),
+            'waste_type': report.waste_type,
+            'severity': report.severity,
+            'status': report.status
+        })
+    
+    return jsonify(result)
 
 # Run the app
 if __name__ == '__main__':

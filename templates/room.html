@@ -424,11 +424,17 @@
                         <div class="card-footer bg-light">
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">Report ID: {{ report.id }}</small>
-                                {% if current_user.is_authenticated and current_user.user_type == 'cleaning_staff' and report.status == 'pending' %}
-                                <button class="btn btn-sm btn-outline-success" disabled>
-                                    <i class="fas fa-check me-1"></i>Mark as In Progress
+                                {% if current_user.is_authenticated and current_user.user_type == 'cleaning_staff' %}
+                            {% if report.status == 'pending' %}
+                                <button class="btn btn-sm btn-outline-success update-status" data-report-id="{{ report.id }}">
+                                    <i class="fas fa-check me-1"></i>Mark as Completed
                                 </button>
-                                {% endif %}
+                            {% elif report.status == 'in_progress' %}
+                                <button class="btn btn-sm btn-outline-info update-status" data-report-id="{{ report.id }}">
+                                    <i class="fas fa-check me-1"></i>Mark as Resolved
+                                </button>
+                            {% endif %}
+                        {% endif %}
                             </div>
                         </div>
                     </div>
@@ -445,5 +451,32 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/report.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/report.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('.update-status').click(function() {
+                let reportId = $(this).data('report-id');
+                $.ajax({
+                    url: '/update_status/' + reportId,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            //Better Feedback:  Update the button or display a success message on the page.
+                            let button = $('.update-status[data-report-id="' + reportId + '"]');
+                            button.prop('disabled', true);
+                            button.html('<i class="fas fa-check me-1"></i>Completed');
+                            //location.reload(); //Avoid full page reload for better UX
+                        } else {
+                            alert('Error updating status: ' + response.message);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('AJAX error:', textStatus, errorThrown);
+                        alert('An error occurred while updating the status. Please try again later.');
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}

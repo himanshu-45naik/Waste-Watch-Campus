@@ -3,24 +3,32 @@ import base64
 from io import BytesIO
 from PIL import Image
 from datetime import datetime
+import io
 
+      
 def save_image(image_data, filename, upload_folder):
-    """
-    Save an image to the specified upload folder
-    """
     if not os.path.exists(upload_folder):
-        os.makedirs(upload_folder)
-    
-    filepath = os.path.join(upload_folder, filename)
-    image_data.save(filepath)
-    return filepath
+        os.makedirs(upload_folder, exist_ok=True)
 
-def generate_image_filename(report_id, image_number):
-    """
-    Generate a unique filename for an uploaded image
-    """
+    filepath = os.path.join(upload_folder, filename)
+    try:
+        image_data.save(filepath)
+        return filepath
+    except Exception as e:
+        print("No image saved")
+        return None  # Indicate failure
+
+    
+      
+import random
+import string
+
+def generate_image_filename(report_id: int, image_number: int) -> str:
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-    return f"report_{report_id}_img{image_number}_{timestamp}.jpg"
+    random_part = ''.join(random.choices(string.ascii_lowercase + string.digits, k=5))
+    return f"report_{report_id}_img{image_number}_{timestamp}_{random_part}.jpg"
+
+    
 
 def get_severity_badge_class(severity):
     """
