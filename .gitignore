@@ -1,0 +1,14 @@
+# Ignore environment variables
+.env
+
+# Ignore uploaded files
+/static/uploads
+
+# Ignore SQLite database
+instance/waste_management.db
+
+# Bytecode and venv
+__pycache__/
+*.py[cod]
+*.sqlite3
+.venv/

@@ -251,9 +251,10 @@
                                                             {% elif report.waste_type == 'E-waste' %}bg-danger
                                                             {% elif report.waste_type == 'Food waste' %}bg-success
                                                             {% elif report.waste_type == 'Hazardous' %}bg-warning
+                                                            {% elif report.waste_type == 'Unknown' %}bg-secondary
                                                             {% else %}bg-secondary{% endif %} text-white">
                                                             <i class="fas {{ get_waste_type_icon(report.waste_type) }} me-1"></i>
-                                                            {{ report.waste_type }}
+                                                            {% if report.waste_type == 'Unknown' %}Mixed Waste{% else %}{{ report.waste_type }}{% endif %}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -262,20 +263,36 @@
                                                         <h6 class="border-bottom pb-2 mb-2">AI Assessment</h6>
                                                         <p>
                                                             {% if report.severity == 'Critical' %}
-                                                            This waste situation requires <strong>immediate attention</strong>. Based on the image analysis, 
-                                                            Gemini AI has classified this as <strong>{{ report.waste_type }}</strong> with critical severity.
-                                                            This presents potential health hazards and environmental risks that should be addressed urgently.
+                                                                This waste situation requires <strong>immediate attention</strong>. Based on the image analysis, 
+                                                                {% if report.waste_type == 'Unknown' %}
+                                                                    Gemini AI has detected a <strong>waste issue</strong> with critical severity.
+                                                                {% else %}
+                                                                    Gemini AI has classified this as <strong>{{ report.waste_type }}</strong> with critical severity.
+                                                                {% endif %}
+                                                                This presents potential health hazards and environmental risks that should be addressed urgently.
                                                             {% elif report.severity == 'High' %}
-                                                            Gemini AI has detected <strong>{{ report.waste_type }}</strong> waste with <strong>high severity</strong>.
-                                                            The situation needs prompt attention as it may pose risks to students and staff if left unaddressed
-                                                            for an extended period.
+                                                                {% if report.waste_type == 'Unknown' %}
+                                                                    Gemini AI has detected <strong>waste</strong> with <strong>high severity</strong>.
+                                                                {% else %}
+                                                                    Gemini AI has detected <strong>{{ report.waste_type }}</strong> waste with <strong>high severity</strong>.
+                                                                {% endif %}
+                                                                The situation needs prompt attention as it may pose risks to students and staff if left unaddressed
+                                                                for an extended period.
                                                             {% elif report.severity == 'Medium' %}
-                                                            The AI has identified this as <strong>{{ report.waste_type }}</strong> with <strong>medium severity</strong>.
-                                                            While not an immediate risk, this waste should be addressed through regular cleaning procedures
-                                                            to maintain a healthy environment.
+                                                                {% if report.waste_type == 'Unknown' %}
+                                                                    The AI has identified <strong>waste</strong> with <strong>medium severity</strong>.
+                                                                {% else %}
+                                                                    The AI has identified this as <strong>{{ report.waste_type }}</strong> with <strong>medium severity</strong>.
+                                                                {% endif %}
+                                                                While not an immediate risk, this waste should be addressed through regular cleaning procedures
+                                                                to maintain a healthy environment.
                                                             {% else %}
-                                                            Gemini AI has analyzed this as <strong>{{ report.waste_type }}</strong> with <strong>low severity</strong>.
-                                                            This is a minor issue that can be addressed during routine cleaning operations without special urgency.
+                                                                {% if report.waste_type == 'Unknown' %}
+                                                                    Gemini AI has analyzed waste with <strong>low severity</strong>.
+                                                                {% else %}
+                                                                    Gemini AI has analyzed this as <strong>{{ report.waste_type }}</strong> with <strong>low severity</strong>.
+                                                                {% endif %}
+                                                                This is a minor issue that can be addressed during routine cleaning operations without special urgency.
                                                             {% endif %}
                                                         </p>
                                                     </div>
