@@ -15,68 +15,38 @@
                     Higher reporting indicates greater awareness and participation in keeping our campus clean.
                 </p>
                 
-                <!-- Overall Leaderboard -->
-                <h2 class="mb-3">Overall Departmental Rankings</h2>
-                <div class="table-responsive mb-5">
-                    <table class="table table-hover leaderboard-table">
-                        <thead class="table-dark">
-                            <tr>
-                                <th scope="col">Rank</th>
-                                <th scope="col">Department</th>
-                                <th scope="col">Reports Submitted</th>
-                                <th scope="col">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for dept in overall_scores %}
-                            <tr class="rank-{{ loop.index }}">
-                                <td>
-                                    <div class="department-rank">
-                                        <span class="rank-number">{{ loop.index }}</span>
-                                    </div>
-                                </td>
-                                <td>{{ dept.department.name }}</td>
-                                <td>{{ dept.report_count }}</td>
-                                <td>
-                                    {% if loop.index == 1 %}
-                                    <span class="badge bg-warning text-dark">
-                                        <i class="fas fa-crown me-1"></i>Leader
-                                    </span>
-                                    {% elif loop.index <= 3 %}
-                                    <span class="badge bg-info">
-                                        <i class="fas fa-award me-1"></i>Top Performer
-                                    </span>
-                                    {% elif loop.index <= 5 %}
-                                    <span class="badge bg-success">
-                                        <i class="fas fa-thumbs-up me-1"></i>Active
-                                    </span>
-                                    {% else %}
-                                    <span class="badge bg-secondary">
-                                        <i class="fas fa-arrow-up me-1"></i>Improving
-                                    </span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+
                 
                 <!-- College-wise Leaderboards -->
-                <h2 class="mb-4">College-wise Rankings</h2>
+                <h2 class="mb-4">College-wise Department Rankings</h2>
                 
                 <div class="row">
                     {% for college_name, departments in college_data.items() %}
                     <div class="col-lg-6 mb-4">
-                        <div class="card h-100">
-                            <div class="card-header bg-dark">
-                                <h5 class="mb-0">{{ college_name }}</h5>
+                        <div class="card h-100 {% if 'Engineering' in college_name %}border-primary{% 
+                                                  elif 'Junior College' in college_name %}border-success{% 
+                                                  elif 'International' in college_name %}border-warning{% 
+                                                  elif 'Architecture' in college_name %}border-danger{% 
+                                                  else %}border-info{% endif %}">
+                            <div class="card-header {% if 'Engineering' in college_name %}bg-primary{% 
+                                                     elif 'Junior College' in college_name %}bg-success{% 
+                                                     elif 'International' in college_name %}bg-warning text-dark{% 
+                                                     elif 'Architecture' in college_name %}bg-danger{% 
+                                                     else %}bg-info{% endif %} text-white">
+                                <h5 class="mb-0">
+                                    {% if 'Engineering' in college_name %}<i class="fas fa-cogs me-2"></i>{% 
+                                    elif 'Junior College' in college_name %}<i class="fas fa-graduation-cap me-2"></i>{% 
+                                    elif 'International' in college_name %}<i class="fas fa-globe-americas me-2"></i>{% 
+                                    elif 'Architecture' in college_name %}<i class="fas fa-drafting-compass me-2"></i>{% 
+                                    else %}<i class="fas fa-robot me-2"></i>{% endif %}
+                                    {{ college_name }}
+                                </h5>
                             </div>
                             <div class="card-body">
                                 {% if departments %}
                                 <div class="table-responsive">
                                     <table class="table table-sm table-hover">
-                                        <thead class="table-secondary">
+                                        <thead class="table-light">
                                             <tr>
                                                 <th scope="col">Rank</th>
                                                 <th scope="col">Department</th>
@@ -85,19 +55,34 @@
                                         </thead>
                                         <tbody>
                                             {% for dept in departments %}
-                                            <tr>
-                                                <td>{{ loop.index }}</td>
-                                                <td>{{ dept.department.name }}</td>
+                                            <tr class="{% if loop.index == 1 %}table-warning{% 
+                                                       elif loop.index == 2 %}table-info{% 
+                                                       elif loop.index == 3 %}table-success{% 
+                                                       endif %}">
+                                                <td class="text-center">
+                                                    <span class="badge rounded-pill 
+                                                        {% if loop.index == 1 %}bg-warning text-dark{% 
+                                                        elif loop.index == 2 %}bg-info{% 
+                                                        elif loop.index == 3 %}bg-success{% 
+                                                        else %}bg-secondary{% endif %}">
+                                                        {{ loop.index }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    {% if loop.index == 1 %}<i class="fas fa-trophy me-1 text-warning"></i>{% endif %}
+                                                    {{ dept.department.name }}
+                                                </td>
                                                 <td>
                                                     <div class="d-flex align-items-center">
-                                                        <div class="progress me-2" style="width: 100px;">
+                                                        <div class="progress me-2" style="width: 100px; height: 10px;">
                                                             {% set max_reports = departments[0].report_count if departments[0].report_count > 0 else 1 %}
                                                             {% set percentage = (dept.report_count / max_reports) * 100 %}
                                                             <div class="progress-bar 
-                                                                {% if loop.index == 1 %}bg-warning{% 
-                                                                elif loop.index == 2 %}bg-info{% 
-                                                                elif loop.index == 3 %}bg-success{% 
-                                                                else %}bg-secondary{% endif %}" 
+                                                                {% if 'Engineering' in college_name %}bg-primary{% 
+                                                                elif 'Junior College' in college_name %}bg-success{% 
+                                                                elif 'International' in college_name %}bg-warning{% 
+                                                                elif 'Architecture' in college_name %}bg-danger{% 
+                                                                else %}bg-info{% endif %}" 
                                                                 role="progressbar" 
                                                                 style="width: {{ percentage }}%;" 
                                                                 aria-valuenow="{{ percentage }}" 
@@ -105,7 +90,7 @@
                                                                 aria-valuemax="100">
                                                             </div>
                                                         </div>
-                                                        <span>{{ dept.report_count }}</span>
+                                                        <span class="fw-bold">{{ dept.report_count }}</span>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -118,6 +103,9 @@
                                     <i class="fas fa-info-circle me-2"></i>No department data available for this college.
                                 </div>
                                 {% endif %}
+                            </div>
+                            <div class="card-footer text-muted">
+                                <small><i class="fas fa-info-circle me-1"></i> {{ departments|length }} departments contributing</small>
                             </div>
                         </div>
                     </div>

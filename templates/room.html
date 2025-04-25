@@ -52,6 +52,115 @@
             </div>
         </div>
         
+        <!-- Overview response card -->
+        {% if reports %}
+        <div class="card mb-4">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Waste Management Summary</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h5 class="card-title">Waste Analysis for {{ room.name }}</h5>
+                        <p class="card-text">
+                            This room has <strong>{{ reports|length }}</strong> waste reports. The management response includes waste type, severity, and recommendations.
+                        </p>
+                        
+                        <!-- Waste type distribution -->
+                        <div class="mb-4">
+                            <h6 class="border-bottom pb-2 mb-3">Waste Type Distribution</h6>
+                            <div class="d-flex flex-wrap">
+                                {% set waste_types = {} %}
+                                {% for report in reports %}
+                                    {% if report.waste_type in waste_types %}
+                                        {% set _ = waste_types.update({report.waste_type: waste_types[report.waste_type] + 1}) %}
+                                    {% else %}
+                                        {% set _ = waste_types.update({report.waste_type: 1}) %}
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% for waste_type, count in waste_types.items() %}
+                                <div class="me-4 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <div style="width: 15px; height: 15px;" class="rounded-circle me-2 
+                                            {% if waste_type == 'Paper' %}bg-info
+                                            {% elif waste_type == 'Plastic' %}bg-primary
+                                            {% elif waste_type == 'E-waste' %}bg-danger
+                                            {% elif waste_type == 'Food waste' %}bg-success
+                                            {% elif waste_type == 'Hazardous' %}bg-warning
+                                            {% else %}bg-secondary{% endif %}">
+                                        </div>
+                                        <span>{{ waste_type }}: {{ count }}</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <!-- Severity distribution -->
+                        <div>
+                            <h6 class="border-bottom pb-2 mb-3">Severity Levels</h6>
+                            <div class="d-flex flex-wrap">
+                                {% set severities = {} %}
+                                {% for report in reports %}
+                                    {% if report.severity in severities %}
+                                        {% set _ = severities.update({report.severity: severities[report.severity] + 1}) %}
+                                    {% else %}
+                                        {% set _ = severities.update({report.severity: 1}) %}
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% for severity, count in severities.items() %}
+                                <div class="me-4 mb-3">
+                                    <span class="badge {{ get_severity_badge_class(severity) }}">
+                                        {{ severity }}: {{ count }}
+                                    </span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100 
+                            {% if reports[0].severity == 'Critical' %}border-danger
+                            {% elif reports[0].severity == 'High' %}border-warning
+                            {% elif reports[0].severity == 'Medium' %}border-info
+                            {% else %}border-success{% endif %}">
+                            <div class="card-header 
+                                {% if reports[0].severity == 'Critical' %}bg-danger
+                                {% elif reports[0].severity == 'High' %}bg-warning
+                                {% elif reports[0].severity == 'Medium' %}bg-info
+                                {% else %}bg-success{% endif %} text-white">
+                                <h5 class="mb-0">Response Required</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    {% if 'Critical' in severities %}
+                                    <strong>Immediate action required.</strong> Critical waste issues need prompt attention from cleaning staff.
+                                    {% elif 'High' in severities %}
+                                    <strong>Prompt action needed.</strong> High severity waste should be addressed within 24 hours.
+                                    {% elif 'Medium' in severities %}
+                                    <strong>Regular cleanup needed.</strong> Schedule standard cleaning for this room.
+                                    {% else %}
+                                    <strong>Minimal intervention needed.</strong> Low level waste can be addressed during routine cleaning.
+                                    {% endif %}
+                                </p>
+                                <div class="text-center">
+                                    <i class="fas 
+                                    {% if 'Critical' in severities %}fa-exclamation-triangle text-danger fa-3x
+                                    {% elif 'High' in severities %}fa-exclamation-circle text-warning fa-3x
+                                    {% elif 'Medium' in severities %}fa-info-circle text-info fa-3x
+                                    {% else %}fa-check-circle text-success fa-3x{% endif %}"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Individual reports -->
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h4 class="mb-0"><i class="fas fa-history me-2"></i>Recent Waste Reports</h4>
@@ -60,12 +169,17 @@
                 {% if reports %}
                     {% for report in reports %}
                     <div class="card mb-4 report-card {{ report.severity.lower() }}">
-                        <div class="card-header">
+                        <div class="card-header 
+                            {% if report.severity == 'Critical' %}bg-danger text-white
+                            {% elif report.severity == 'High' %}bg-warning
+                            {% elif report.severity == 'Medium' %}bg-info text-white
+                            {% else %}bg-success text-white{% endif %}">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">{{ report.title }}</h5>
                                 <div>
-                                    <span class="badge {{ get_severity_badge_class(report.severity) }} me-2">
-                                        {{ report.severity }}
+                                    <span class="badge bg-dark me-2">
+                                        <i class="fas {{ get_waste_type_icon(report.waste_type) }} me-1"></i>
+                                        {{ report.waste_type }}
                                     </span>
                                     <span class="badge {{ get_status_badge_class(report.status) }}">
                                         {{ report.status|capitalize }}
@@ -79,7 +193,7 @@
                                     {% set images = report.get_images() %}
                                     {% if images %}
                                     <div class="report-gallery">
-                                        <img src="{{ url_for('static', filename='uploads/' + images[0]) }}" alt="Waste image" class="main-image mb-2">
+                                        <img src="{{ url_for('static', filename='uploads/' + images[0]) }}" alt="Waste image" class="main-image mb-2 img-fluid rounded">
                                         {% if images|length > 1 %}
                                         <div class="report-thumbnails">
                                             {% for image in images %}
@@ -98,35 +212,206 @@
                                     {% endif %}
                                 </div>
                                 <div class="col-md-8">
-                                    <div class="mb-3">
-                                        <h6 class="mb-2">Waste Type:</h6>
-                                        <p>
-                                            <i class="fas {{ get_waste_type_icon(report.waste_type) }} me-2"></i>
-                                            {{ report.waste_type }}
-                                        </p>
+                                    <!-- Gemini AI Analysis Card -->
+                                    <div class="card mb-3 border-primary">
+                                        <div class="card-header bg-primary text-white">
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/smart_toy/default/24px.svg" 
+                                                     alt="Gemini AI" class="me-2" style="filter: invert(1);">
+                                                <h5 class="mb-0">Gemini AI Analysis</h5>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-3 border-end">
+                                                    <div class="text-center mb-3">
+                                                        <div class="rounded-circle p-3 
+                                                            {% if report.severity == 'Critical' %}bg-danger
+                                                            {% elif report.severity == 'High' %}bg-warning
+                                                            {% elif report.severity == 'Medium' %}bg-info
+                                                            {% else %}bg-success{% endif %} text-white mx-auto mb-2" 
+                                                            style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                                                            {% if report.severity == 'Critical' %}
+                                                            <i class="fas fa-radiation fa-2x"></i>
+                                                            {% elif report.severity == 'High' %}
+                                                            <i class="fas fa-exclamation-circle fa-2x"></i>
+                                                            {% elif report.severity == 'Medium' %}
+                                                            <i class="fas fa-exclamation fa-2x"></i>
+                                                            {% else %}
+                                                            <i class="fas fa-info-circle fa-2x"></i>
+                                                            {% endif %}
+                                                        </div>
+                                                        <h6 class="fw-bold">{{ report.severity }} Severity</h6>
+                                                    </div>
+                                                    
+                                                    <div class="text-center mb-3">
+                                                        <div class="p-2 rounded mb-2 
+                                                            {% if report.waste_type == 'Paper' %}bg-info
+                                                            {% elif report.waste_type == 'Plastic' %}bg-primary
+                                                            {% elif report.waste_type == 'E-waste' %}bg-danger
+                                                            {% elif report.waste_type == 'Food waste' %}bg-success
+                                                            {% elif report.waste_type == 'Hazardous' %}bg-warning
+                                                            {% else %}bg-secondary{% endif %} text-white">
+                                                            <i class="fas {{ get_waste_type_icon(report.waste_type) }} me-1"></i>
+                                                            {{ report.waste_type }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <div class="mb-3">
+                                                        <h6 class="border-bottom pb-2 mb-2">AI Assessment</h6>
+                                                        <p>
+                                                            {% if report.severity == 'Critical' %}
+                                                            This waste situation requires <strong>immediate attention</strong>. Based on the image analysis, 
+                                                            Gemini AI has classified this as <strong>{{ report.waste_type }}</strong> with critical severity.
+                                                            This presents potential health hazards and environmental risks that should be addressed urgently.
+                                                            {% elif report.severity == 'High' %}
+                                                            Gemini AI has detected <strong>{{ report.waste_type }}</strong> waste with <strong>high severity</strong>.
+                                                            The situation needs prompt attention as it may pose risks to students and staff if left unaddressed
+                                                            for an extended period.
+                                                            {% elif report.severity == 'Medium' %}
+                                                            The AI has identified this as <strong>{{ report.waste_type }}</strong> with <strong>medium severity</strong>.
+                                                            While not an immediate risk, this waste should be addressed through regular cleaning procedures
+                                                            to maintain a healthy environment.
+                                                            {% else %}
+                                                            Gemini AI has analyzed this as <strong>{{ report.waste_type }}</strong> with <strong>low severity</strong>.
+                                                            This is a minor issue that can be addressed during routine cleaning operations without special urgency.
+                                                            {% endif %}
+                                                        </p>
+                                                    </div>
+                                                    
+                                                    <div>
+                                                        <h6 class="border-bottom pb-2 mb-2">Recommendations</h6>
+                                                        <ul class="fa-ul mb-0">
+                                                            {% if report.waste_type == 'Paper' %}
+                                                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Use proper recycling bins for paper waste</li>
+                                                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Ensure paper is separated from contaminated materials</li>
+                                                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Consider implementing paper reduction policies</li>
+                                                            {% elif report.waste_type == 'Plastic' %}
+                                                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Segregate different types of plastic for proper recycling</li>
+                                                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Clean plastic containers before disposal</li>
+                                                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Consider alternatives to single-use plastics</li>
+                                                            {% elif report.waste_type == 'E-waste' %}
+                                                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Use designated e-waste collection points</li>
+                                                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Handle with care to prevent hazardous material leakage</li>
+                                                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Follow proper protocols for electronic waste disposal</li>
+                                                            {% elif report.waste_type == 'Food waste' %}
+                                                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Remove promptly to prevent odors and pests</li>
+                                                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Consider composting options if available</li>
+                                                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Sanitize the area after removal</li>
+                                                            {% elif report.waste_type == 'Hazardous' %}
+                                                            <li><span class="fa-li"><i class="fas fa-exclamation-triangle text-danger"></i></span>Use specialized handling protocols and PPE</li>
+                                                            <li><span class="fa-li"><i class="fas fa-exclamation-triangle text-danger"></i></span>Contact hazardous waste management team immediately</li>
+                                                            <li><span class="fa-li"><i class="fas fa-exclamation-triangle text-danger"></i></span>Evacuate the area if there's a spill or strong odor</li>
+                                                            {% else %}
+                                                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Properly sort and dispose of mixed waste</li>
+                                                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Separate recyclables when possible</li>
+                                                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span>Implement better waste segregation practices</li>
+                                                            {% endif %}
+                                                            
+                                                            {% if report.severity == 'Critical' %}
+                                                            <li><span class="fa-li"><i class="fas fa-exclamation-triangle text-danger"></i></span>Immediate action required within 24 hours</li>
+                                                            {% elif report.severity == 'High' %}
+                                                            <li><span class="fa-li"><i class="fas fa-exclamation-circle text-warning"></i></span>Address within 48 hours</li>
+                                                            {% elif report.severity == 'Medium' %}
+                                                            <li><span class="fa-li"><i class="fas fa-info-circle text-info"></i></span>Schedule for cleanup within the week</li>
+                                                            {% else %}
+                                                            <li><span class="fa-li"><i class="fas fa-info-circle text-secondary"></i></span>Include in regular cleaning schedule</li>
+                                                            {% endif %}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-light">
+                                            <small class="text-muted">
+                                                <i class="fas fa-robot me-1"></i>
+                                                Analysis powered by Google Gemini AI
+                                            </small>
+                                        </div>
                                     </div>
+                                    
+                                    <!-- Standard Severity Alert -->
+                                    <div class="alert 
+                                        {% if report.severity == 'Critical' %}alert-danger
+                                        {% elif report.severity == 'High' %}alert-warning
+                                        {% elif report.severity == 'Medium' %}alert-info
+                                        {% else %}alert-success{% endif %} mb-3">
+                                        <div class="d-flex">
+                                            <div class="me-3">
+                                                <div class="rounded-circle p-2 
+                                                    {% if report.severity == 'Critical' %}bg-danger
+                                                    {% elif report.severity == 'High' %}bg-warning
+                                                    {% elif report.severity == 'Medium' %}bg-info
+                                                    {% else %}bg-success{% endif %} text-white" 
+                                                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                                    {% if report.severity == 'Critical' %}
+                                                    <i class="fas fa-radiation"></i>
+                                                    {% elif report.severity == 'High' %}
+                                                    <i class="fas fa-exclamation-circle"></i>
+                                                    {% elif report.severity == 'Medium' %}
+                                                    <i class="fas fa-exclamation"></i>
+                                                    {% else %}
+                                                    <i class="fas fa-info-circle"></i>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h5 class="alert-heading">{{ report.severity }} Severity</h5>
+                                                <p class="mb-0">
+                                                    {% if report.severity == 'Critical' %}
+                                                    This requires immediate attention! Health hazard or serious environmental impact.
+                                                    {% elif report.severity == 'High' %}
+                                                    Urgent cleanup needed. May pose risks if left unaddressed.
+                                                    {% elif report.severity == 'Medium' %}
+                                                    Should be cleaned soon but not an immediate risk.
+                                                    {% else %}
+                                                    Minor issue that should be addressed during routine cleaning.
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
                                     {% if report.description %}
                                     <div class="mb-3">
-                                        <h6 class="mb-2">Description:</h6>
+                                        <h6 class="mb-2 border-bottom pb-1">Description:</h6>
                                         <p>{{ report.description }}</p>
                                     </div>
                                     {% endif %}
-                                    <div class="mb-3">
-                                        <h6 class="mb-2">Reported By:</h6>
-                                        <p>
-                                            <i class="fas fa-user me-2"></i>
-                                            {{ report.reporter.username }}
-                                            <span class="badge bg-secondary ms-2">{{ report.reporter.user_type|capitalize }}</span>
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-2">Reported On:</h6>
-                                        <p>
-                                            <i class="fas fa-calendar-alt me-2"></i>
-                                            {{ report.created_at.strftime('%B %d, %Y at %I:%M %p') }}
-                                        </p>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <h6 class="mb-2 border-bottom pb-1">Reported By:</h6>
+                                                <p>
+                                                    <i class="fas fa-user me-2"></i>
+                                                    {{ report.reporter.username }}
+                                                    <span class="badge bg-secondary ms-2">{{ report.reporter.user_type|capitalize }}</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div>
+                                                <h6 class="mb-2 border-bottom pb-1">Reported On:</h6>
+                                                <p>
+                                                    <i class="fas fa-calendar-alt me-2"></i>
+                                                    {{ report.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-light">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Report ID: {{ report.id }}</small>
+                                {% if current_user.is_authenticated and current_user.user_type == 'cleaning_staff' and report.status == 'pending' %}
+                                <button class="btn btn-sm btn-outline-success" disabled>
+                                    <i class="fas fa-check me-1"></i>Mark as In Progress
+                                </button>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

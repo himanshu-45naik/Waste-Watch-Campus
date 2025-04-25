@@ -1,7 +1,7 @@
 import os
 import logging
 from flask import Flask, render_template, redirect, url_for, flash, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
+from storage import db
 from sqlalchemy.orm import DeclarativeBase
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -19,7 +19,6 @@ logger = logging.getLogger(__name__)
 class Base(DeclarativeBase):
     pass
 
-db = SQLAlchemy(model_class=Base)
 
 # Create the Flask app
 app = Flask(__name__)
@@ -115,12 +114,6 @@ with app.app_context():
                     "classrooms": 15,
                     "labs": 5,
                     "departments": ["Architecture"]
-                },
-                "D.Y. Patil Robotics & Automation Lab": {
-                    "floors": 2,  # Ground + 1 floor
-                    "classrooms": 5,
-                    "labs": 10,
-                    "departments": ["Robotics and Automation"]
                 }
             }
             
@@ -381,13 +374,38 @@ def leaderboard():
     # Sort by report count (descending)
     department_scores.sort(key=lambda x: x['report_count'], reverse=True)
     
-    # Group by college
-    colleges = Building.query.all()
+    # Group buildings by college type
+    college_groups = {
+        "D.Y. Patil College of Engineering": [],
+        "D.Y. Patil Junior College": [],
+        "D.Y. Patil International University": [],
+        "D.Y. Patil College of Architecture": [],
+    }
+    
+    # Assign buildings to their college group
+    all_buildings = Building.query.all()
+    for building in all_buildings:
+        if "Engineering" in building.name:
+            college_groups["D.Y. Patil College of Engineering"].append(building)
+        elif "Junior College" in building.name:
+            college_groups["D.Y. Patil Junior College"].append(building)
+        elif "International" in building.name:
+            college_groups["D.Y. Patil International University"].append(building)
+        elif "Architecture" in building.name:
+            college_groups["D.Y. Patil College of Architecture"].append(building)
+        
+    
+    # Now create college data structure with departments grouped by college type
     college_data = {}
     
-    for college in colleges:
-        # Get all floors in this building
-        floors = Floor.query.filter_by(building_id=college.id).all()
+    for college_name, buildings in college_groups.items():
+        # Skip empty college groups
+        if not buildings:
+            continue
+            
+        # Get all floors in these buildings
+        building_ids = [building.id for building in buildings]
+        floors = Floor.query.filter(Floor.building_id.in_(building_ids)).all()
         floor_ids = [floor.id for floor in floors]
         
         # Get all rooms in these floors
@@ -413,7 +431,9 @@ def leaderboard():
         college_departments = list(dept_data.values())
         college_departments.sort(key=lambda x: x['report_count'], reverse=True)
         
-        college_data[college.name] = college_departments
+        # Only add this college if it has at least one department with data
+        if college_departments:
+            college_data[college_name] = college_departments
     
     return render_template('leaderboard.html', 
                           overall_scores=department_scores, 
