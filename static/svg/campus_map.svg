@@ -1,100 +1,123 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600">
   <defs>
-    <linearGradient id="campusGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#1a2638" />
-      <stop offset="100%" stop-color="#2d3a4f" />
+    <linearGradient id="deepBackground" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e293b" />
     </linearGradient>
-    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
-      <feOffset dx="2" dy="2" result="offsetblur" />
-      <feComponentTransfer>
-        <feFuncA type="linear" slope="0.5" />
-      </feComponentTransfer>
+    
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#a78bfa" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur" />
+      <feOffset dx="0" dy="4" result="offsetblur" />
+      <feFlood flood-color="#000" flood-opacity="0.3" result="offsetColor"/>
+      <feComposite in="offsetColor" in2="offsetblur" operator="in" result="offsetBlur"/>
       <feMerge>
-        <feMergeNode />
-        <feMergeNode in="SourceGraphic" />
+        <feMergeNode in="offsetBlur"/>
+        <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
+    
+    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#334155" stroke-width="0.5" opacity="0.3"/>
+    </pattern>
   </defs>
 
-  <rect class="background" x="0" y="0" width="1000" height="600" fill="url(#campusGradient)" />
+  <rect x="0" y="0" width="1000" height="600" fill="url(#deepBackground)" />
+  <rect x="0" y="0" width="1000" height="600" fill="url(#grid)" />
 
-  <circle cx="500" cy="300" r="220" fill="none" stroke="#3a4a63" stroke-width="15" stroke-opacity="0.3" />
-  <circle cx="500" cy="300" r="280" fill="none" stroke="#3a4a63" stroke-width="8" stroke-opacity="0.2" />
+  <circle cx="500" cy="300" r="220" fill="none" stroke="#38bdf8" stroke-width="2" stroke-opacity="0.1" />
+  <circle cx="500" cy="300" r="280" fill="none" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.1" stroke-dasharray="10,5" />
 
-  <path d="M 200,300 C 300,150 700,150 800,300" stroke="#555" stroke-width="20" fill="none" />
-  <path d="M 200,300 L 250,450 L 750,450 L 800,300" stroke="#555" stroke-width="20" fill="none" />
-  <path d="M 500,300 L 500,450" stroke="#555" stroke-width="20" fill="none" />
+  <g opacity="0.6" stroke="#64748b" stroke-width="14" fill="none" stroke-linecap="round">
+      <path d="M 200,300 C 300,150 700,150 800,300" />
+      <path d="M 200,300 L 250,450 L 750,450 L 800,300" />
+      <path d="M 500,300 L 500,450" />
+  </g>
 
-  <a href="/building/1" class="building-link">
-    <g id="building-1" class="building building-a" filter="url(#dropShadow)">
-      <rect x="750" y="200" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
-      <text x="810" y="245" font-family="Arial" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle">A</text>
-    </g>
-  </a>
-
-  <a href="/building/2" class="building-link">
-    <g id="building-2" class="building building-b" filter="url(#dropShadow)">
-      <rect x="650" y="150" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
-      <text x="710" y="195" font-family="Arial" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle">B</text>
-    </g>
-  </a>
-
-  <a href="/building/3" class="building-link">
-    <g id="building-3" class="building building-c" filter="url(#dropShadow)">
-      <rect x="500" y="120" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
-      <text x="560" y="165" font-family="Arial" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle">C</text>
+  <a href="/building/5" class="building-link">
+    <g id="building-5" class="building building-e" filter="url(#softGlow)">
+      <rect x="200" y="200" width="120" height="90" rx="8" ry="8" fill="url(#blueGrad)" stroke="#bae6fd" stroke-width="2" />
+      <text x="260" y="245" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle">Wing E</text>
     </g>
   </a>
 
   <a href="/building/4" class="building-link">
-    <g id="building-4" class="building building-d" filter="url(#dropShadow)">
-      <rect x="350" y="150" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
-      <text x="410" y="195" font-family="Arial" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle">D</text>
+    <g id="building-4" class="building building-d" filter="url(#softGlow)">
+      <rect x="350" y="150" width="120" height="90" rx="8" ry="8" fill="url(#blueGrad)" stroke="#bae6fd" stroke-width="2" />
+      <text x="410" y="195" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle">Wing D</text>
     </g>
   </a>
 
-  <a href="/building/5" class="building-link">
-    <g id="building-5" class="building building-e" filter="url(#dropShadow)">
-      <rect x="200" y="200" width="120" height="90" rx="5" ry="5" fill="#5c88c6" stroke="#34568B" stroke-width="2" />
-      <text x="260" y="245" font-family="Arial" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle">E</text>
+  <a href="/building/3" class="building-link">
+    <g id="building-3" class="building building-c" filter="url(#softGlow)">
+      <rect x="500" y="120" width="120" height="90" rx="8" ry="8" fill="url(#blueGrad)" stroke="#bae6fd" stroke-width="2" />
+      <text x="560" y="165" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle">Wing C</text>
+    </g>
+  </a>
+
+  <a href="/building/2" class="building-link">
+    <g id="building-2" class="building building-b" filter="url(#softGlow)">
+      <rect x="650" y="150" width="120" height="90" rx="8" ry="8" fill="url(#blueGrad)" stroke="#bae6fd" stroke-width="2" />
+      <text x="710" y="195" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle">Wing B</text>
+    </g>
+  </a>
+
+  <a href="/building/1" class="building-link">
+    <g id="building-1" class="building building-a" filter="url(#softGlow)">
+      <rect x="770" y="240" width="120" height="90" rx="8" ry="8" fill="url(#blueGrad)" stroke="#bae6fd" stroke-width="2" />
+      <text x="830" y="290" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle">Wing A</text>
     </g>
   </a>
 
   <a href="/building/6" class="building-link">
-    <g id="building-6" class="building building-junior-college" filter="url(#dropShadow)">
-      <rect x="150" y="350" width="120" height="90" rx="5" ry="5" fill="#4CAF50" stroke="#2E7D32" stroke-width="2" />
-      <text x="210" y="395" font-family="Arial" font-size="16" font-weight="bold" fill="#fff" text-anchor="middle">Junior College</text>
+    <g id="building-6" class="building building-junior-college" filter="url(#softGlow)">
+      <rect x="150" y="350" width="120" height="90" rx="8" ry="8" fill="url(#greenGrad)" stroke="#a7f3d0" stroke-width="2" />
+      <text x="210" y="395" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#fff" text-anchor="middle">High College</text>
     </g>
   </a>
 
   <a href="/building/7" class="building-link">
-    <g id="building-7" class="building building-international" filter="url(#dropShadow)">
-      <rect x="350" y="350" width="120" height="90" rx="5" ry="5" fill="#FF9800" stroke="#E65100" stroke-width="2" />
-      <text x="410" y="395" font-family="Arial" font-size="16" font-weight="bold" fill="#fff" text-anchor="middle">International</text>
+    <g id="building-7" class="building building-international" filter="url(#softGlow)">
+      <rect x="340" y="350" width="140" height="90" rx="8" ry="8" fill="url(#orangeGrad)" stroke="#fde68a" stroke-width="2" />
+      <text x="410" y="390" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">University</text>
+      <text x="410" y="410" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Administration</text>
     </g>
   </a>
 
   <a href="/building/8" class="building-link">
-    <g id="building-8" class="building building-architecture" filter="url(#dropShadow)">
-      <rect x="550" y="350" width="120" height="90" rx="5" ry="5" fill="#9C27B0" stroke="#6A1B9A" stroke-width="2" />
-      <text x="610" y="395" font-family="Arial" font-size="16" font-weight="bold" fill="#fff" text-anchor="middle">Architecture</text>
+    <g id="building-8" class="building building-architecture" filter="url(#softGlow)">
+      <rect x="550" y="350" width="120" height="90" rx="8" ry="8" fill="url(#purpleGrad)" stroke="#ddd6fe" stroke-width="2" />
+      <text x="610" y="395" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#fff" text-anchor="middle">Auditorium</text>
     </g>
   </a>
 
-  
+  <text x="500" y="50" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#f8fafc" text-anchor="middle" filter="url(#softGlow)">D.Y. Patil Campus Map</text>
 
-  <text x="500" y="50" font-family="Arial" font-size="28" font-weight="bold" fill="#fff" text-anchor="middle" filter="url(#dropShadow)">D.Y. Patil Campus Map</text>
-
-  <g filter="url(#dropShadow)">
-    <circle cx="70" cy="70" r="25" fill="#34495e" stroke="#fff" stroke-width="2" />
-    <text x="70" y="75" font-family="Arial" font-size="16" font-weight="bold" fill="#fff" text-anchor="middle">N</text>
-    <line x1="70" y1="70" x2="70" y2="40" stroke="#fff" stroke-width="2" />
-    <polygon points="70,35 65,45 75,45" fill="#fff" />
+  <g filter="url(#softGlow)">
+    <circle cx="70" cy="70" r="28" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
+    <text x="70" y="75" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#38bdf8" text-anchor="middle">N</text>
+    <line x1="70" y1="70" x2="70" y2="40" stroke="#38bdf8" stroke-width="2" />
+    <polygon points="70,35 65,45 75,45" fill="#38bdf8" />
   </g>
 
-  <g filter="url(#dropShadow)">
-    <rect x="350" y="520" width="300" height="50" rx="5" ry="5" fill="#34495e" fill-opacity="0.8" />
-    <text x="500" y="550" font-family="Arial" font-size="14" fill="#fff" text-anchor="middle">Click on any building to explore</text>
+  <g filter="url(#softGlow)">
+    <rect x="350" y="520" width="300" height="50" rx="25" ry="25" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <text x="500" y="550" font-family="Arial, sans-serif" font-size="14" fill="#cbd5e1" text-anchor="middle">Click on any building to explore</text>
   </g>
 </svg>
