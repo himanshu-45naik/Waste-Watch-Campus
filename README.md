@@ -56,7 +56,7 @@ Project Structure
 Screenshots  
 
 - Home Page
-![Campus Map](screenshots/Home.png)
+![Campus Map](screenshots/home.png)
 - Building View
 ![Building View](screenshots/floors.png)
 - Waste Report Form
