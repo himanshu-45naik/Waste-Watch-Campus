@@ -7,8 +7,8 @@
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Campus Map</a></li>
-                <li class="breadcrumb-item"><a href="{{ url_for('building', building_id=room.floor.building_id) }}">{{ room.floor.building.name }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Campus Map</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('main.building', building_id=room.floor.building_id) }}">{{ room.floor.building.name }}</a></li>
                 <li class="breadcrumb-item active" aria-current="page">{{ room.name }}</li>
             </ol>
         </nav>
@@ -39,11 +39,11 @@
                     </div>
                     <div class="col-md-4 text-md-end">
                         {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('report', room_id=room.id) }}" class="btn btn-warning">
+                        <a href="{{ url_for('report.report', room_id=room.id) }}" class="btn btn-warning">
                             <i class="fas fa-exclamation-triangle me-1"></i>Report Waste
                         </a>
                         {% else %}
-                        <a href="{{ url_for('login') }}?next={{ url_for('report', room_id=room.id) }}" class="btn btn-warning">
+                        <a href="{{ url_for('auth.login') }}?next={{ url_for('report.report', room_id=room.id) }}" class="btn btn-warning">
                             <i class="fas fa-sign-in-alt me-1"></i>Login to Report Waste
                         </a>
                         {% endif %}

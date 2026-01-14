@@ -7,9 +7,9 @@
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Campus Map</a></li>
-                <li class="breadcrumb-item"><a href="{{ url_for('building', building_id=room.floor.building_id) }}">{{ room.floor.building.name }}</a></li>
-                <li class="breadcrumb-item"><a href="{{ url_for('room', room_id=room.id) }}">{{ room.name }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Campus Map</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('main.building', building_id=room.floor.building_id) }}">{{ room.floor.building.name }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('main.room', room_id=room.id) }}">{{ room.name }}</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Report Waste</li>
             </ol>
         </nav>
@@ -116,7 +116,7 @@
                     </div>
                     
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                        <a href="{{ url_for('room', room_id=room.id) }}" class="btn btn-secondary">Cancel</a>
+                        <a href="{{ url_for('main.room', room_id=room.id) }}" class="btn btn-secondary">Cancel</a>
                         {{ form.submit(class="btn btn-warning") }}
                     </div>
                 </form>

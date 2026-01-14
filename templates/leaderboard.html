@@ -121,11 +121,11 @@
                             reporting waste issues and encouraging others to participate.
                         </p>
                         {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('index') }}" class="btn btn-outline-light">
+                        <a href="{{ url_for('main.index') }}" class="btn btn-outline-light">
                             <i class="fas fa-map-marked-alt me-1"></i>Explore Campus Map
                         </a>
                         {% else %}
-                        <a href="{{ url_for('register') }}" class="btn btn-outline-light">
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-outline-light">
                             <i class="fas fa-user-plus me-1"></i>Register Now
                         </a>
                         {% endif %}
